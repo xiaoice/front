@@ -1,0 +1,12 @@
+{
+  "name": "front",
+  "version": "1.0.0",
+  "description": "一年经验用10年",
+  "scripts": {
+    "push": "sh push.sh"
+  },
+  "repository": "https://github.com/xiaoice/front.git",
+  "author": "xiaoice",
+  
+  "dependencies": {}
+}
