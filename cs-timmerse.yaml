@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metawork-bot
+  labels:
+    app: metawork-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metawork-bot
+  template:
+    metadata:
+      labels:
+        app: metawork-bot
+    spec:
+      imagePullSecrets:
+        - name: codingcorp-artifact-secret
+      containers:
+        - name: metawork-bot
+          image: cloudstudio-devops-docker.pkg.coding.net/artifacts/saas.container/metawork-bot:saas-metawork-excess-alpha1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "250m"
+              memory: 256Mi
+            requests:
+              cpu: "100m"
+              memory: 128Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metawork-bot
+  labels:
+    app: metawork-bot
+spec:
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: metawork-bot

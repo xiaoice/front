@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timmerse
+  labels:
+    app: timmerse
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: timmerse
+  template:
+    metadata:
+      labels:
+        app: timmerse
+    spec:
+      imagePullSecrets:
+        - name: cs-artifactory
+      containers:
+        - name: timmerse
+          image: cloudstudio-devops-docker.pkg.coding.net/artifacts/saas.container/cloud-studio-timmerse:saas-metawork-excess-alpha1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 512Mi
+            requests:
+              cpu: "250m"
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: timmerse
+  labels:
+    app: timmerse
+spec:
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: timmerse
